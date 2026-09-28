@@ -41,8 +41,8 @@ RETRIEVAL_CONFIG = {
 # LLM設定
 LLM_CONFIG = {
     "model": {
-        "default": "gemini-2.0-flash-exp",
-        "options": ["gemini-2.0-flash-exp", "gemini-1.5-flash", "gemini-1.5-pro"]
+        "default": "gemini-3-flash-preview",
+        "options": ["gemini-3-flash-preview"]
     },
     "temperature": {
         "default": 0.0,
@@ -60,7 +60,7 @@ LLM_CONFIG = {
 
 # Embedding設定
 EMBEDDING_CONFIG = {
-    "model": "models/text-embedding-004",
+    "model": "gemini-embedding-001",
     "task_type": "retrieval_document",
     "dimension": 768
 }
@@ -91,5 +91,5 @@ MAX_FILE_SIZE_MB = 10
 # パフォーマンス設定
 BATCH_SIZE = 100
 API_RETRY_ATTEMPTS = 3
-API_RETRY_MIN_WAIT = 4
-API_RETRY_MAX_WAIT = 10
+API_RETRY_MIN_WAIT = 20
+API_RETRY_MAX_WAIT = 100

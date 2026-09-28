@@ -8,10 +8,9 @@ from typing import List
 from langchain_community.document_loaders import (
     PyPDFLoader,
     Docx2txtLoader,
-    TextLoader,
-    UnstructuredMarkdownLoader
+    TextLoader
 )
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 
 class DocumentLoader:
@@ -22,7 +21,7 @@ class DocumentLoader:
             '.pdf': PyPDFLoader,
             '.docx': Docx2txtLoader,
             '.txt': TextLoader,
-            '.md': UnstructuredMarkdownLoader
+            '.md': TextLoader
         }
 
     def load_file(self, file_path: str) -> List[Document]:
@@ -50,8 +49,16 @@ class DocumentLoader:
 
         try:
             loader_class = self.supported_extensions[ext]
-            loader = loader_class(file_path)
-            documents = loader.load()
+            if ext in [".txt", ".md"]:
+                try:
+                    loader = loader_class(file_path, encoding="utf-8")
+                    documents = loader.load()
+                except Exception:
+                    loader = loader_class(file_path, encoding="cp932")
+                    documents = loader.load()
+            else:
+                loader = loader_class(file_path)
+                documents = loader.load()
 
             # メタデータにファイル名を追加
             for doc in documents:
@@ -88,8 +95,10 @@ class DocumentLoader:
                 try:
                     documents = self.load_file(file_path)
                     all_documents.extend(documents)
-                except Exception:
-                    continue  # 失敗したファイルはスキップ
+                except Exception as e:
+                    print(f"読み込み失敗:{file_path}")
+                    print(f"理由:{e}")
+                    continue 
 
         return all_documents
 
